@@ -1,3 +1,4 @@
+import { MovieModel } from "@/config/db"
 import env from "@/config/env"
 import { z } from "zod"
 
@@ -56,6 +57,16 @@ export async function searchMovies(query: string): Promise<Movie[]> {
 }
 
 export async function getMovie(id: string): Promise<Movie> {
+  // Check the DB if the movie exists
+  const movie = await MovieModel.findOne({
+    where: { id },
+  })
+
+  if (movie) {
+    return movie.dataValues
+  }
+
+  // Otherwise, fetch it from TMDB
   const response = await fetch(env.TMDB_API_URL + "movie/" + id, {
     method: "GET",
     headers: {

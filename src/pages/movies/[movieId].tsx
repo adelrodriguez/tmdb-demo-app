@@ -31,11 +31,14 @@ const DetailsWrapper = styled.div`
   align-items: center;
   height: 100%;
   margin: 0 auto;
+
+  @media (max-width: 70rem) {
+    margin: 0 2rem;
+  }
 `
 
-const GoBack = styled(Link)`
-  text-decoration: none;
-  color: inherit;
+const GoBack = styled.div`
+  cursor: pointer;
   margin-top: 1rem;
   font-size: 1rem;
   line-height: 1.25rem;
@@ -58,7 +61,7 @@ export default function MoviePage() {
     },
   })
 
-  if (error) {
+  if (error || data === null) {
     return (
       <Main>
         <ErrorMessage message="Sorry, we couldn't find that movie">
@@ -68,27 +71,36 @@ export default function MoviePage() {
     )
   }
 
-  if (!data) {
-    return <main>No data to display</main>
+  if (isLoading) {
+    return (
+      <>
+        <Head>
+          <title>Loading... | Movie Details</title>
+        </Head>
+        <Main>
+          <DetailsWrapper>
+            <LoadingSpinner />
+          </DetailsWrapper>
+        </Main>
+      </>
+    )
   }
 
   return (
     <>
       <Head>
-        <title>{data.title} | Movie Details</title>
+        <title>{data?.title} | Movie Details</title>
       </Head>
       <Main>
         <DetailsWrapper>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
+          {data && (
             <>
               <MovieDetails
                 {...data}
                 imageUrl={data.posterPath && generateImageUrl(data.posterPath)}
                 releaseDate={new Date(data.releaseDate)}
               />
-              <GoBack href="/">Go back</GoBack>
+              <GoBack onClick={router.back}>🔙 Go back</GoBack>
             </>
           )}
         </DetailsWrapper>

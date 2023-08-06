@@ -1,3 +1,4 @@
+import db, { MovieModel } from "@/config/db"
 import { searchMovies } from "@/services/tmdb"
 import type { Movie } from "@/services/tmdb"
 import { APIResponse } from "@/utils/api"
@@ -22,6 +23,9 @@ export default async function handler(
   }
 
   const movies = await searchMovies(result.data.query)
+
+  // Save all the movies to the database
+  await Promise.all(movies.map((movie) => MovieModel.upsert(movie)))
 
   res.status(200).json({ data: movies, success: result.success })
 }
