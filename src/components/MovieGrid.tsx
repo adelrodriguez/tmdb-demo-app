@@ -15,13 +15,24 @@ const NavLink = styled(Link)`
 `
 
 export default function MovieGrid({ movies }: { movies: Movie[] }) {
+  function getMovieYear(releaseDate: string) {
+    const year = new Date(releaseDate).getFullYear()
+
+    if (isNaN(year)) return null
+
+    return year
+  }
   return (
     <Container>
       {movies.map((movie) => (
-        <NavLink href={`/movie/${movie.id}`} key={movie.id}>
+        <NavLink href={`/movies/${movie.id}`} key={movie.id}>
           <MovieTile
             title={movie.title}
-            imageUrl={`https://image.tmdb.org/t/p/original${movie.posterPath}`}
+            imageUrl={
+              movie.posterPath &&
+              `https://image.tmdb.org/t/p/original${movie.posterPath}`
+            }
+            year={getMovieYear(movie.releaseDate)}
           />
         </NavLink>
       ))}
