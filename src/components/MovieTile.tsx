@@ -21,6 +21,10 @@ const ImageWrapper = styled.div`
   position: relative;
 `
 
+const Poster = styled(Image)`
+  object-fit: contain;
+`
+
 const EmptyImage = styled.div`
   width: 100%;
   height: 200px;
@@ -49,16 +53,7 @@ export default function MovieTile({
   return (
     <Container>
       <ImageWrapper>
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            style={{ objectFit: "contain" }}
-          />
-        ) : (
-          <EmptyImage />
-        )}
+        {imageUrl ? <Poster src={imageUrl} alt={title} fill /> : <EmptyImage />}
       </ImageWrapper>
       <Title>
         {title} {year && `(${year})`}

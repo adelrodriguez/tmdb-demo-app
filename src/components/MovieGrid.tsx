@@ -2,6 +2,7 @@ import { Movie } from "@/services/tmdb"
 import MovieTile from "@/components/MovieTile"
 import styled from "styled-components"
 import Link from "next/link"
+import { generateImageUrl } from "@/utils/image"
 
 const Container = styled.div`
   display: grid;
@@ -28,10 +29,7 @@ export default function MovieGrid({ movies }: { movies: Movie[] }) {
         <NavLink href={`/movies/${movie.id}`} key={movie.id}>
           <MovieTile
             title={movie.title}
-            imageUrl={
-              movie.posterPath &&
-              `https://image.tmdb.org/t/p/original${movie.posterPath}`
-            }
+            imageUrl={movie.posterPath && generateImageUrl(movie.posterPath)}
             year={getMovieYear(movie.releaseDate)}
           />
         </NavLink>

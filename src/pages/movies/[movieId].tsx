@@ -2,6 +2,46 @@ import { Movie } from "@/services/tmdb"
 import { APIResponse } from "@/utils/api"
 import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/router"
+import { Inter } from "next/font/google"
+import Head from "next/head"
+import styled from "styled-components"
+import ErrorMessage from "@/components/ErrorMessage"
+import Link from "next/link"
+import MovieDetails from "@/components/MovieDetails"
+import { generateImageUrl } from "@/utils/image"
+import LoadingSpinner from "@/components/Loading"
+
+const inter = Inter({ subsets: ["latin"] })
+
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+  font-family: ${inter.style.fontFamily};
+  height: 100vh;
+
+  background-color: #f9fafb;
+`
+
+const DetailsWrapper = styled.div`
+  display: flex;
+  max-width: 70rem;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0 auto;
+`
+
+const GoBack = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  font-weight: 300;
+  align-self: flex-end;
+`
 
 export default function MoviePage() {
   const router = useRouter()
@@ -19,11 +59,13 @@ export default function MoviePage() {
   })
 
   if (error) {
-    return <div>Error</div>
-  }
-
-  if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Main>
+        <ErrorMessage message="Sorry, we couldn't find that movie">
+          <Link href="/">Go back home</Link>
+        </ErrorMessage>
+      </Main>
+    )
   }
 
   if (!data) {
@@ -31,8 +73,26 @@ export default function MoviePage() {
   }
 
   return (
-    <main>
-      <h1>{data?.title}</h1>
-    </main>
+    <>
+      <Head>
+        <title>{data.title} | Movie Details</title>
+      </Head>
+      <Main>
+        <DetailsWrapper>
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              <MovieDetails
+                {...data}
+                imageUrl={data.posterPath && generateImageUrl(data.posterPath)}
+                releaseDate={new Date(data.releaseDate)}
+              />
+              <GoBack href="/">Go back</GoBack>
+            </>
+          )}
+        </DetailsWrapper>
+      </Main>
+    </>
   )
 }
