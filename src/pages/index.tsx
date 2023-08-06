@@ -1,15 +1,23 @@
-import Head from "next/head"
-import { Inter } from "next/font/google"
-import { useSearchParams } from "next/navigation"
-import SearchBar from "@/components/SearchBar"
-import { useQuery } from "@tanstack/react-query"
-import { Movie } from "@/services/tmdb"
-import MovieGrid from "@/components/MovieGrid"
 import { APIResponse } from "@/utils/api"
-import styled from "styled-components"
+import { Inter } from "next/font/google"
+import { Movie } from "@/services/tmdb"
+import { useQuery } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
+import ErrorMessage from "@/components/ErrorMessage"
+import Head from "next/head"
+import MovieGrid from "@/components/MovieGrid"
 import MovieGridLoading from "@/components/MovieGridLoading"
+import SearchBar from "@/components/SearchBar"
+import styled from "styled-components"
 
 const inter = Inter({ subsets: ["latin"] })
+
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+  font-family: ${inter.style.fontFamily};
+  height: 100vh;
+`
 
 const Hero = styled.div`
   display: flex;
@@ -27,6 +35,14 @@ const H1 = styled.h1`
   font-size: 3rem;
   line-height: 1;
   text-align: center;
+`
+
+const ErrorWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+
+  flex: 1;
+  height: 100%;
 `
 
 const GridWrapper = styled.div`
@@ -58,16 +74,20 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${inter.className}`}>
+      <Main>
         <Hero>
           <H1>Search Movie DB</H1>
           <SearchBar />
         </Hero>
-        {!!error && <div>Error</div>}
+        {!!error && (
+          <ErrorWrapper>
+            <ErrorMessage message="Something went wrong" />
+          </ErrorWrapper>
+        )}
         <GridWrapper>
           {isLoading ? <MovieGridLoading /> : <MovieGrid movies={data || []} />}
         </GridWrapper>
-      </main>
+      </Main>
     </>
   )
 }
